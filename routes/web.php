@@ -112,7 +112,9 @@ Route::controller(HomeController::class)->group(function () {
 
 
     //Home Page
-    Route::get('/', 'index')->name('home');
+    Route::get('/', function (){
+        return redirect(route('admin.dashboard'));
+    })->name('home');
 
     Route::post('/home/section/featured', 'load_featured_section')->name('home.section.featured');
     Route::post('/home/section/best_selling', 'load_best_selling_section')->name('home.section.best_selling');
