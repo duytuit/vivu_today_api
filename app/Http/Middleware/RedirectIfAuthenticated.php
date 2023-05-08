@@ -20,7 +20,7 @@ class RedirectIfAuthenticated
         // Middleware 3
 
         if (Auth::guard($guard)->check()) {
-            return redirect('/home');
+            return redirect('/admin');
         }
 
         return $next($request);
