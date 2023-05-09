@@ -28,8 +28,8 @@ class ProductController extends Controller
     {
         $count = DB::table('products')->select('id')->count();
         $skip = $request->page;
-        $skip = ($skip * 2) - 2;
-        $sdfsdf = DB::table('products')->skip($skip)->take(2)->get();
+        $skip = ($skip * 10) - 10;
+        $sdfsdf = DB::table('products')->skip($skip)->take(10)->get();
         return response()->json(['data'=>$sdfsdf,'count'=>$count]);
     }
 
