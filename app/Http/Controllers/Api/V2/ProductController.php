@@ -27,7 +27,8 @@ class ProductController extends Controller
     public function index()
     {
         $sdfsdf = DB::table('products')->limit(20)->get();
-        return response()->json(['data'=>$sdfsdf]);
+        $count = DB::table('products')->select('id')->count();
+        return response()->json(['data'=>$sdfsdf,'count'=>$count]);
     }
 
     public function show($id)
