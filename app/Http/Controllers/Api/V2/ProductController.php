@@ -19,13 +19,14 @@ use App\Http\Resources\V2\ProductMiniCollection;
 use App\Http\Resources\V2\ProductDetailCollection;
 use App\Http\Resources\V2\DigitalProductDetailCollection;
 use App\Models\CustomerProduct;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     use apiResponse;
     public function index()
     {
-        $sdfsdf = Product::paginate(20);
+        $sdfsdf = DB::table('products')->paginate(20);
         return response()->json(['data'=>$sdfsdf]);
     }
 
