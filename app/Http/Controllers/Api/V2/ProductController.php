@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Resources\V2\ClassifiedProductDetailCollection;
 use App\Http\Resources\V2\ClassifiedProductMiniCollection;
+use App\Traits\apiResponse;
 use Cache;
 use App\Models\Shop;
 use App\Models\Color;
@@ -21,9 +22,11 @@ use App\Models\CustomerProduct;
 
 class ProductController extends Controller
 {
+    use apiResponse;
     public function index()
     {
-        return new ProductMiniCollection(Product::latest()->paginate(10));
+        $sdfsdf = Product::paginate(2);
+        return $this->sendSuccessApi($sdfsdf);
     }
 
     public function show($id)
@@ -106,7 +109,7 @@ class ProductController extends Controller
         return new ProductMiniCollection(filter_products($products)->latest()->paginate(10));
     }
 
-    
+
 
     public function bestSeller()
     {
