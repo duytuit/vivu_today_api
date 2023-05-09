@@ -26,7 +26,7 @@ class ProductController extends Controller
     public function index()
     {
         $sdfsdf = Product::paginate(20);
-        return $this->sendSuccessApi($sdfsdf);
+        return response()->json(['data'=>$sdfsdf]);
     }
 
     public function show($id)
