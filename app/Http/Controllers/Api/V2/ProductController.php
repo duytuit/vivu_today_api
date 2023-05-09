@@ -27,9 +27,10 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $count = DB::table('products')->select('id')->count();
-        $skip = $request->page;
-        $skip = ($skip * 10) - 10;
-        $result = DB::table('products')->skip($skip)->take(10)->get();
+        $skip =  $request->get('page',1);
+        $limit = $request->get('limit',10);
+        $skip = ($skip * $limit) - $limit;
+        $result = DB::table('products')->skip($skip)->take($limit)->get();
         return $this->sendSuccessApi(['data'=>$result,'count'=>$count]);
     }
 
