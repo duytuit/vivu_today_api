@@ -26,7 +26,7 @@ class ProductController extends Controller
     use apiResponse;
     public function index()
     {
-        $sdfsdf = DB::table('products')->paginate(20);
+        $sdfsdf = DB::table('products')->limit(20)->get();
         return response()->json(['data'=>$sdfsdf]);
     }
 
