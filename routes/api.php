@@ -332,6 +332,8 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
     //Pickup Point list
     Route::get('pickup-list', 'App\Http\Controllers\Api\V2\ShippingController@pickup_list');
 });
+Route::get('test/states', 'App\Http\Controllers\Api\V2\AddressController@getStates');
+Route::get('test/products', 'App\Http\Controllers\Api\V2\ProductController@index');
 //Route::prefix('ajax')->name('ajax.')->group(function () {
 //    Route::get('/ajax_wards', 'App\Http\Controllers\AddressController@ajaxWards')->name('ajaxWards');
 //});
