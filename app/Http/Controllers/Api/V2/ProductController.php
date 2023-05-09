@@ -24,10 +24,11 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     use apiResponse;
-    public function index()
+    public function index(Request $request)
     {
-        $sdfsdf = DB::table('products')->limit(20)->take(10)->get();
         $count = DB::table('products')->select('id')->count();
+        $skip = $request->page;
+        $sdfsdf = DB::table('products')->skip($skip)->take(2)->get();
         return response()->json(['data'=>$sdfsdf,'count'=>$count]);
     }
 
