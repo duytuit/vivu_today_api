@@ -25,7 +25,7 @@ class ProductController extends Controller
     use apiResponse;
     public function index()
     {
-        $sdfsdf = Product::paginate(2);
+        $sdfsdf = Product::paginate(20);
         return $this->sendSuccessApi($sdfsdf);
     }
 
