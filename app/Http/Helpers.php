@@ -965,12 +965,12 @@ if (!function_exists('static_asset')) {
 }
 
 
-// if (!function_exists('isHttps')) {
-//     function isHttps()
-//     {
-//         return !empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS']);
-//     }
-// }
+ if (!function_exists('getBaseFullUrl')) {
+     function getBaseFullUrl()
+     {
+         return (!empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'])? "https" : "http"). "://". @$_SERVER['HTTP_HOST'].'/';
+     }
+ }
 
 if (!function_exists('getBaseURL')) {
     function getBaseURL()

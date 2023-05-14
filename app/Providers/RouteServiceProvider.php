@@ -43,35 +43,35 @@ class RouteServiceProvider extends ServiceProvider
      $this->mapApiRoutes();
 
      $this->mapApiSellerRoutes();
-    
+
      $this->mapAdminRoutes();
 
      $this->mapSellerRoutes();
-    
+
      $this->mapAffiliateRoutes();
-    
+
      $this->mapRefundRoutes();
-    
+
      $this->mapClubPointsRoutes();
-    
+
      $this->mapOtpRoutes();
-    
+
      $this->mapOfflinePaymentRoutes();
-    
+
      $this->mapAfricanPaymentGatewayRoutes();
-    
+
      $this->mapPaytmRoutes();
-    
+
      $this->mapPosRoutes();
-    
+
      $this->mapSellerPackageRoutes();
-    
+
      $this->mapDeliveryBoyRoutes();
-    
+
      $this->mapAuctionRoutes();
 
      $this->mapWholesaleRoutes();
-    
+
      $this->mapWebRoutes();
 
     // $this->mapInstallRoutes();
@@ -328,7 +328,7 @@ class RouteServiceProvider extends ServiceProvider
   protected function mapApiSellerRoutes()
   {
     Route::prefix('api')
-       ->middleware('api')
+       ->middleware(['api','cors'])
        ->namespace($this->namespace)
        ->group(base_path('routes/api_seller.php'));
   }
@@ -343,7 +343,7 @@ class RouteServiceProvider extends ServiceProvider
   protected function mapApiRoutes()
   {
     Route::prefix('api')
-       ->middleware('api')
+       ->middleware(['api','cors'])
        ->namespace($this->namespace)
        ->group(base_path('routes/api.php'));
   }

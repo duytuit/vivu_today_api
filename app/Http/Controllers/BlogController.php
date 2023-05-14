@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Upload;
 use Illuminate\Http\Request;
 use App\Models\BlogCategory;
 use App\Models\Blog;
+use Illuminate\Support\Str;
+use Nette\Utils\Helpers;
 
 class BlogController extends Controller
 {
@@ -17,7 +20,7 @@ class BlogController extends Controller
         $this->middleware(['permission:delete_blog'])->only('destroy');
         $this->middleware(['permission:publish_blog'])->only('change_status');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -27,7 +30,7 @@ class BlogController extends Controller
     {
         $sort_search = null;
         $blogs = Blog::orderBy('created_at', 'desc');
-        
+
         if ($request->search != null){
             $blogs = $blogs->where('title', 'like', '%'.$request->search.'%');
             $sort_search = $request->search;
@@ -57,26 +60,31 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'category_id' => 'required',
             'title' => 'required|max:255',
         ]);
 
         $blog = new Blog;
-        
+
         $blog->category_id = $request->category_id;
         $blog->title = $request->title;
         $blog->banner = $request->banner;
-        $blog->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
+        $blog->slug = Str::slug( $request->slug);
         $blog->short_description = $request->short_description;
         $blog->description = $request->description;
-        
+
         $blog->meta_title = $request->meta_title;
         $blog->meta_img = $request->meta_img;
         $blog->meta_description = $request->meta_description;
         $blog->meta_keywords = $request->meta_keywords;
-        
+        if($request->banner){
+            $blog->src_img_banner =getBaseFullUrl().Upload::find($request->banner)->file_name;
+        }
+        if($request->meta_img){
+            $blog->src_img_meta =getBaseFullUrl().Upload::find($request->meta_img)->file_name;
+        }
         $blog->save();
 
         flash(translate('Blog post has been created successfully'))->success();
@@ -91,7 +99,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        
+
     }
 
     /**
@@ -104,7 +112,7 @@ class BlogController extends Controller
     {
         $blog = Blog::find($id);
         $blog_categories = BlogCategory::all();
-        
+
         return view('backend.blog_system.blog.edit', compact('blog','blog_categories'));
     }
 
@@ -116,7 +124,7 @@ class BlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {        
+    {
         $request->validate([
             'category_id' => 'required',
             'title' => 'required|max:255',
@@ -127,25 +135,30 @@ class BlogController extends Controller
         $blog->category_id = $request->category_id;
         $blog->title = $request->title;
         $blog->banner = $request->banner;
-        $blog->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
+        $blog->slug = Str::slug($request->slug);
         $blog->short_description = $request->short_description;
         $blog->description = $request->description;
-        
+
         $blog->meta_title = $request->meta_title;
         $blog->meta_img = $request->meta_img;
         $blog->meta_description = $request->meta_description;
         $blog->meta_keywords = $request->meta_keywords;
-        
+        if($request->banner){
+            $blog->src_img_banner =getBaseFullUrl().Upload::find($request->banner)->file_name;
+        }
+        if($request->meta_img){
+            $blog->src_img_meta =getBaseFullUrl().Upload::find($request->meta_img)->file_name;
+        }
         $blog->save();
 
         flash(translate('Blog post has been updated successfully'))->success();
         return redirect()->route('blog.index');
     }
-    
+
     public function change_status(Request $request) {
         $blog = Blog::find($request->id);
         $blog->status = $request->status;
-        
+
         $blog->save();
         return 1;
     }
@@ -159,7 +172,7 @@ class BlogController extends Controller
     public function destroy($id)
     {
         Blog::find($id)->delete();
-        
+
         return redirect('admin/blogs');
     }
 
@@ -181,27 +194,27 @@ class BlogController extends Controller
             $case1 = $search . '%';
             $case2 = '%' . $search . '%';
 
-            $blogs->orderByRaw("CASE 
-                WHEN title LIKE '$case1' THEN 1 
-                WHEN title LIKE '$case2' THEN 2 
-                ELSE 3 
+            $blogs->orderByRaw("CASE
+                WHEN title LIKE '$case1' THEN 1
+                WHEN title LIKE '$case2' THEN 2
+                ELSE 3
                 END");
         }
-        
+
         if ($request->has('selected_categories')) {
             $selected_categories = $request->selected_categories;
             $blog_categories = BlogCategory::whereIn('slug', $selected_categories)->pluck('id')->toArray();
 
             $blogs->whereIn('category_id', $blog_categories);
         }
-        
+
         $blogs = $blogs->where('status', 1)->orderBy('created_at', 'desc')->paginate(12);
 
         $recent_blogs = Blog::where('status', 1)->orderBy('created_at', 'desc')->limit(9)->get();
 
         return view("frontend.blog.listing", compact('blogs', 'selected_categories', 'search', 'recent_blogs'));
     }
-    
+
     public function blog_details($slug) {
         $blog = Blog::where('slug', $slug)->first();
         $recent_blogs = Blog::where('status', 1)->orderBy('created_at', 'desc')->limit(9)->get();

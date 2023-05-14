@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V2;
 use App\Http\Resources\V2\ClassifiedProductDetailCollection;
 use App\Http\Resources\V2\ClassifiedProductMiniCollection;
 use App\Traits\apiResponse;
-use Cache;
 use App\Models\Shop;
 use App\Models\Color;
 use App\Models\Product;
@@ -19,6 +18,7 @@ use App\Http\Resources\V2\ProductMiniCollection;
 use App\Http\Resources\V2\ProductDetailCollection;
 use App\Http\Resources\V2\DigitalProductDetailCollection;
 use App\Models\CustomerProduct;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
@@ -26,12 +26,14 @@ class ProductController extends Controller
     use apiResponse;
     public function index(Request $request)
     {
-        $count = DB::table('products')->select('id')->count();
-        $skip =  $request->get('page',1);
-        $limit = $request->get('limit',10);
-        $skip = ($skip * $limit) - $limit;
-        $result = DB::table('products')->skip($skip)->take($limit)->get();
-        return $this->sendSuccessApi(['data'=>$result,'count'=>$count]);
+        $key_cache = $request->fullUrl();
+        $result = Cache::remember($key_cache, 15, function () use($request) {
+            $skip = $request->get('page', 1);
+            $limit = $request->get('limit', 10);
+            $skip = ($skip * $limit) - $limit;
+           return DB::table('products')->skip($skip)->take($limit)->get();
+        });
+        return $this->sendSuccessApi(['data'=>$result]);
     }
 
     public function show($id)
