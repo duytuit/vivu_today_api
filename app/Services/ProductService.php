@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Color;
 use App\Models\Product;
+use App\Models\Upload;
 use App\Models\User;
 use App\Utility\ProductUtility;
 use Combinations;
@@ -39,7 +40,7 @@ class ProductService
             $discount_end_date   = strtotime($date_var[1]);
         }
         unset($collection['date_range']);
-        
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -127,7 +128,36 @@ class ProductService
             $published = 0;
         }
         unset($collection['button']);
+        if(@$collection['photos']){
+            $photos = explode(',', $collection['photos']);
+            if(count($photos)>0){
+                $url_files=null;
+                foreach ($photos as $photo) {
+                    $url_file = Upload::find($photo);
+                    if($url_file){
+                        $url_files[]=$url_file->file_name;
 
+                    }
+                }
+                if($url_files){
+                    $collection['src_img_photos']=json_encode($url_files);
+                }
+            }
+        }
+        if(@$collection['thumbnail_img']){
+            $thumbnail_img = $collection['thumbnail_img'];
+            $url_file = Upload::find($thumbnail_img);
+            if($url_file){
+                $collection['src_img_thumbnail']=$url_file->file_name;
+            }
+        }
+        if(@$collection['meta_img']){
+            $meta_img = $collection['meta_img'];
+            $url_file = Upload::find($meta_img);
+            if($url_file){
+                $collection['src_img_meta']=$url_file->file_name;
+            }
+        }
         $data = $collection->merge(compact(
             'user_id',
             'approved',
@@ -153,7 +183,36 @@ class ProductService
         $same_slug_count = Product::where('slug', 'LIKE', $slug . '%')->count();
         $slug_suffix = $same_slug_count > 1 ? '-' . $same_slug_count + 1 : '';
         $slug .= $slug_suffix;
+        if(@$collection['photos']){
+            $photos = explode(',', $collection['photos']);
+            if(count($photos)>0){
+                $url_files=null;
+                foreach ($photos as $photo) {
+                     $url_file = Upload::find($photo);
+                     if($url_file){
+                         $url_files[]=$url_file->file_name;
 
+                     }
+                }
+                if($url_files){
+                    $collection['src_img_photos']= json_encode($url_files);
+                }
+            }
+        }
+        if(@$collection['thumbnail_img']){
+            $thumbnail_img = $collection['thumbnail_img'];
+            $url_file = Upload::find($thumbnail_img);
+            if($url_file){
+                $collection['src_img_thumbnail']=$url_file->file_name;
+            }
+        }
+        if(@$collection['meta_img']){
+            $meta_img = $collection['meta_img'];
+            $url_file = Upload::find($meta_img);
+            if($url_file){
+                $collection['src_img_meta']=$url_file->file_name;
+            }
+        }
         if(addon_is_activated('refund_request') && !isset($collection['refundable'])){
             $collection['refundable'] = 0;
         }
@@ -188,7 +247,7 @@ class ProductService
             $discount_end_date   = strtotime($date_var[1]);
         }
         unset($collection['date_range']);
-        
+
         if ($collection['meta_title'] == null) {
             $collection['meta_title'] = $collection['name'];
         }
@@ -207,7 +266,7 @@ class ProductService
         }
         unset($collection['lang']);
 
-        
+
         $shipping_cost = 0;
         if (isset($collection['shipping_type'])) {
             if ($collection['shipping_type'] == 'free') {
@@ -220,7 +279,7 @@ class ProductService
 
         $colors = json_encode(array());
         if (
-            isset($collection['colors_active']) && 
+            isset($collection['colors_active']) &&
             $collection['colors_active'] &&
             $collection['colors'] &&
             count($collection['colors']) > 0
@@ -274,7 +333,7 @@ class ProductService
         }
 
         unset($collection['button']);
-        
+
         $data = $collection->merge(compact(
             'discount_start_date',
             'discount_end_date',
@@ -284,7 +343,7 @@ class ProductService
             'choice_options',
             'attributes',
         ))->toArray();
-        
+
         $product->update($data);
 
         return $product;

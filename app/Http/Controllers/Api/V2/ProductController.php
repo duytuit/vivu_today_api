@@ -31,7 +31,7 @@ class ProductController extends Controller
             $skip = $request->get('page', 1);
             $limit = $request->get('limit', 10);
             $skip = ($skip * $limit) - $limit;
-           return DB::table('products')->skip($skip)->take($limit)->get();
+           return DB::table('products')->skip($skip)->take($limit)->orderBy('id','desc')->get();
         });
         return $this->sendSuccessApi(['data'=>$result]);
     }

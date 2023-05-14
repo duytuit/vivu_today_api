@@ -80,10 +80,17 @@ class BlogController extends Controller
         $blog->meta_description = $request->meta_description;
         $blog->meta_keywords = $request->meta_keywords;
         if($request->banner){
-            $blog->src_img_banner =getBaseFullUrl().Upload::find($request->banner)->file_name;
+            $file_upload =Upload::find($request->banner);
+            if($file_upload){
+                $blog->src_img_banner =$file_upload->file_name;
+            }
+
         }
         if($request->meta_img){
-            $blog->src_img_meta =getBaseFullUrl().Upload::find($request->meta_img)->file_name;
+            $file_upload =Upload::find($request->meta_img);
+            if($file_upload){
+                $blog->src_img_meta =$file_upload->file_name;
+            }
         }
         $blog->save();
 
@@ -144,10 +151,17 @@ class BlogController extends Controller
         $blog->meta_description = $request->meta_description;
         $blog->meta_keywords = $request->meta_keywords;
         if($request->banner){
-            $blog->src_img_banner =getBaseFullUrl().Upload::find($request->banner)->file_name;
+            $file_upload =Upload::find($request->banner);
+            if($file_upload){
+                $blog->src_img_banner =$file_upload->file_name;
+            }
+
         }
         if($request->meta_img){
-            $blog->src_img_meta =getBaseFullUrl().Upload::find($request->meta_img)->file_name;
+            $file_upload =Upload::find($request->meta_img);
+            if($file_upload){
+                $blog->src_img_meta =$file_upload->file_name;
+            }
         }
         $blog->save();
 
